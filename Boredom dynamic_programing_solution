@@ -1,0 +1,61 @@
+problem link: https://codeforces.com/contest/455/problem/A
+
+approach:
+First, we pre-compute the frequency of occurrence of each element in Alex's sequence (using the array "freq", say)
+
+dp[i] stores the maximum sum that Alex can get using the numbers from 1 to i. Thus, dp[0] is 0, and dp[1] is freq[1] (the number of '1's in the sequence)
+
+For i = 2 to 10^5 (10^5 being the maximum possible value of any number in Alex's sequence according to the given constraints), dp[i] is calculated using the inference that each set of "i"s (if at all they occur in the sequence) can either all be picked OR not picked at all:
+
+dp[i] = max(I, II), where:
+
+I = dp[i-1] represents the situation where "i" isn't picked at all (As "i" isn't picked at all, none of the "i-1"s will be deleted, and the sum will be the same as the one calculated for dp[i-1])
+
+II = dp[i-2] + (freq[i] * i) represents the situation where all "i"s are picked (As all the "i"s are picked, all the "i-1"s WILL be deleted, and we cannot consider dp[i-1] at all, given that dp[i-1] was itself computed while considering the situation where all the "i-1"s may be picked. Instead, we use dp[i-2]; the sum computed therein is safe to use, given that none of the "i-2"s will be deleted when the "i"s are picked. Also, as we are picking all the "i"s, our previous sum (i.e., dp[i-2]) will increase by (freq[i] * i))
+
+Final answer will just be dp[100000].
+
+
+
+code:
+#include<bits/stdc++.h> 
+#define aint(x) (x).begin(), (x).end()
+#define all(x) (x).begin(), (x).end()
+const int MOD = 1e9 + 7;
+#define takeInput(s) for(auto& x:s) cin>>x;
+#define print(s) for(auto x:s) cout<<x<<' '; cout<<endl;
+#define int long long int
+#define F first
+#define S second
+#define pb push_back
+#define yy "YES"
+#define nn "NO"
+#define gcd __gcd
+using namespace std;
+const int N = 1e5;
+ 
+ 
+ 
+int32_t main(){
+ 
+   
+    // // int t; cin>>t;
+    // // while(t--){
+    // //     solve();
+    // // }   
+    // solve();
+    int n , x; cin>>n;
+   vector<int>cnt(N+1 , 0);
+   vector<int>dp(N + 1,0);
+   for(int i = 0; i < n; i++){
+        cin>>x;
+        cnt[x]++;
+   }
+   dp[1] = cnt[1];
+   dp[0] = 0;
+   for(int i = 2; i <= N; i++){
+        dp[i] = max(dp[i-1] , dp[i-2] + cnt[i] * i);
+   }
+   cout<<dp[N];
+    return 0;
+}
